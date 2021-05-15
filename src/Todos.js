@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import {MdDelete,MdBookmarkBorder, MdBookmark} from 'react-icons/md';
 import firebase from 'firebase/app';
 import './App.css';
-import { firebaseConfig } from './Config';
-const Todos=({todos,deleteTodo})=>{
+import {toast,ToastContainer} from 'react-toastify';
+toast.configure();
+const Todos=({todos,deleteTodo,lav})=>{
     const [item,setItem]=useState([]);
     
     function bookmarkTodo(key,bookmark)
     {
-        firebase.database().ref(`/todos/${key}`).update(
+        firebase.database().ref(`/todos/${lav}/${key}`).update(
         {
             bookmark: !bookmark,
-        })
+        });
+        (bookmark===false)?(toast('Todo Complete')):(toast('Todo Incompleted'));
 
     }
     return(

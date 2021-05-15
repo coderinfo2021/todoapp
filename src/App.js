@@ -1,102 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import Todos from './Todos';
-import {toast,ToastContainer} from 'react-toastify';
-
 
 import {firebaseConfig} from './Config';
 import firebase from 'firebase/app';
 import 'firebase/database';
 
-import {v4} from 'uuid';
+
+import Signup from './Signup';
+import Signin from './Signin';
+import Home from './Home';
 
 
 
-
+import {BrowserRouter,Route,Switch} from 'react-router-dom';
 firebase.initializeApp(firebaseConfig);
 const App=()=>{
-   const [todo,setTodo]=useState('');
-   const [todos,setTodos]=useState({});
-   const [bookmark,setBookmark]=useState(false);
-
-   const readTodo=(e)=>{
-       e.preventDefault();
-       setTodo(e.target.value);
-   }
-   async function addTodoToFirebase()
-   {
-       try{
-        firebase.database().ref('todos/'+v4())
-        .set({
-            todo:todo,
-            bookmark:bookmark
-        });
-        
-       }
-       catch(error)
-       {
-           console.log(error);
-       }
-    }
-    async function updateTodosState(data)
-    {
-        setTodos(data);
-    }
-    async function getTodoFromFirebase()
-    {
-        try{
-           var getTodo= await firebase.database().ref('todos/');
-        //    console.log(getTodo);
-           getTodo.on('value',(snapshot)=>{
-               const data=snapshot.val();
-               updateTodosState(data);
-               
-               
-           })
-        
-        }
-        catch(error)
-        {
-            console.log(error);
-        }
-    }
-    
-    async function deleteTodo(key)
-    {
-        var getTodo= await firebase.database().ref('todos/'+key);
-        getTodo.remove();
-    }
-    async function deleteAllTodo()
-    {
-        var getTodo=await firebase.database().ref('todos/');
-        getTodo.remove();
-    }
-
-    
-    useEffect(()=>{
-        getTodoFromFirebase();
-    },[])
-
-
-
-    
-
-
+    const [lav,setLav]=useState(localStorage.getItem('user'));
+    //   async function logout(e)
+    //  {
+    //      e.preventDefault();
+    //      await firebase.auth().signOut()
+    //      .then(()=>{
+    //          console.log('success');
+    //         //  setOut(true);
+    //      })
+    //      .catch((error)=>{
+    //          console.log("Something went wrong");
+    //      })
+    //  }
     
    return(
-       <>
-           <h1>Todo Input</h1>
-           <div className="form-div">
-               <input className="inp" type="text" placeholder="add a new todo item..." 
-               onChange={readTodo}/>
-               <button className="btn" id="btn-add"
-               onClick={addTodoToFirebase}>Add Item</button>
-           </div>
-           <h1>Todo List</h1>
-           <Todos todos={todos} deleteTodo={deleteTodo}/>
-           
-           <button className="btn" id="btn-clear" onClick={deleteAllTodo}>clear List</button>
-       </>
+       <BrowserRouter>
+            <Switch>
+                <Route exact path="/"  render={()=> <Signup lav={lav} setLav={setLav}/>}/>
+                <Route excat path="/Signin"  render={()=> <Signin lav={lav} setLav={setLav}/>} />
+                <Route excat path="/Home" render={()=><Home lav={lav} setLav={setLav}
+                />}/>
+            </Switch>
+       </BrowserRouter>
+  
    )
 }
 export default App;
