@@ -15,6 +15,7 @@ const Home=({lav,setLav})=>{
     const [todos,setTodos]=useState({});
     const [bookmark,setBookmark]=useState(false);
     const [out,setOut]=useState(false);
+    const [isLoading,setIsLoading]=useState(true);
     
     
 
@@ -51,9 +52,8 @@ const Home=({lav,setLav})=>{
          //    console.log(getTodo);
             getTodo.on('value',(snapshot)=>{
                 const data=snapshot.val();
+                setIsLoading(false);
                 updateTodosState(data);
-                
-                
             })
          
          }
@@ -96,6 +96,14 @@ const Home=({lav,setLav})=>{
      {
          return(
              <Redirect to="/"/>
+         )
+     }
+     if(isLoading)
+     {
+         return(
+             <div className="loading">
+                 <h1>Loading...</h1>
+             </div>
          )
      }
  
